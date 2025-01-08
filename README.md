@@ -59,6 +59,44 @@ Get fullPath of current process
 ```ps1
 [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
 ```
+When running a script some variables could be used
+```ps1
+$myInvocation.MyCommand.Name
+$myInvocation.MyCommand.Path
+$PSCommandPath
+```
+ADSI/LDAP search
+```ps1
+([adsisearcher]"(&(objectclass=computer)(name=$($env:COMPUTERNAME)))").findall()
+([adsisearcher]"(&(objectclass=group)(samaccountname=$($adgroup)))").findall()
+```
+transcript
+```ps1
+Start-Transcript -Path .\test.txt
+Get-Process -Name "explorer"
+Write-Host "This is test"
+Stop-Transcript
+Uninstall Modern Windows Apps - MSIX
+'''
+```ps1
+Get-AppxPackage -AllUsers -Name "*MSTeams*" | Remove-AppxPackage -AllUsers
+```
+Combine data to one
+```ps1
+[System.IO.Path]::Combine($env:APPDATA,'Microsoft','Teams','Update.exe') + ' --uninstall -s'
+```
+Get all user profiles and their SIDs
+```ps1
+$userProfiles = Get-WmiObject Win32_UserProfile | Where-Object { $_.Special -eq $false } | Select-Object LocalPath, SID
+```
+unpack .cab
+```ps1
+expand.exe -F:* "<Filelocation>\***.cab" "<Filelocation>\cabextract" -Recurse
+```
+Unpack .zip
+```ps1
+Expand-Archive -Path "<Filelocation>\***.zip" -DestinationPath "$($env:TEMP)\zipextract\"
+```
 Set attribute hidden and system
 ```ps1
 Set-ItemProperty -Path "C:\test.txt" -Name Attributes -Value ([System.IO.FileAttributes]::Hidden + [System.IO.FileAttributes]::System)
