@@ -14,18 +14,6 @@ Start-Process "C:\Program Files (x86)\Microsoft Office\Office15\WINWORD.EXE" -Wa
 Get info about the a services
 ```ps1
 Get-Service -Name:'WinDefend'
-```                        
-set kms server
-```ps1
-slmgr.vbs -skms servername:port
-```
-set windows key
-```ps1
-slmgr.vbs -ipk xxxxx-xxxxx-xxxxx-xxxxx-xxxxx 
-```
-activate (KMS) Volume License Key
-```ps1
-slmgr.vbs -ato 
 ```
 Get contents of a file
 ```ps1
@@ -76,18 +64,14 @@ Start-Transcript -Path .\test.txt
 Get-Process -Name "explorer"
 Write-Host "This is test"
 Stop-Transcript
+```
 Uninstall Modern Windows Apps - MSIX
-'''
 ```ps1
 Get-AppxPackage -AllUsers -Name "*MSTeams*" | Remove-AppxPackage -AllUsers
 ```
 Combine data to one
 ```ps1
 [System.IO.Path]::Combine($env:APPDATA,'Microsoft','Teams','Update.exe') + ' --uninstall -s'
-```
-Get all user profiles and their SIDs
-```ps1
-$userProfiles = Get-WmiObject Win32_UserProfile | Where-Object { $_.Special -eq $false } | Select-Object LocalPath, SID
 ```
 unpack .cab
 ```ps1
@@ -108,10 +92,6 @@ $CSVData = Import-CSV -Path $ExportPath
 Display the data in Grid View from Pipeline input
 ```ps1
 $CSVData | Out-Gridview
-```
-get ip info
-```ps1
-Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -ne "Disconnected"}
 ```
 Set Display name of program
 ```ps1
@@ -156,10 +136,6 @@ Set ErrorAction global
 ```ps1
 $ProgressPreference = "SilentlyContinue"
 ```
-set a proxy
-```ps1
-[System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy <Severname>:<port>
-```
 set/edit current background 
 ```ps1
 mspaint.exe C:\Users\$($env:USERNAME)\AppData\Roaming\Microsoft\Windows\Themes\TranscodedWallpaper
@@ -188,6 +164,7 @@ Forces system to refresh
 ```ps1
 RUNDLL32.EXE USER32.DLL, UpdatePerUserSystemParameters 1, True
 ```
+# network
 Reslove DNS
 ```ps1
 Resolve-DnsName dcaes.local
@@ -195,6 +172,14 @@ Resolve-DnsName dcaes.local
 test server/ip on port
 ```ps1
 Test-NetConnection 10.11.18.10 -Port 53
+```
+set a proxy
+```ps1
+[System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy <Severname>:<port>
+```
+get ip info
+```ps1
+Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -ne "Disconnected"}
 ```
 # shortcut
 start settings
@@ -212,6 +197,19 @@ start windowsdefender://RansomwareProtection
 start store
 ```ps1
 start ms-windows-store://pdp/?ProductId=9n4wgh0z6vhq
+```
+# Set activation 
+set kms server
+```ps1
+slmgr.vbs -skms servername:port
+```
+set windows key
+```ps1
+slmgr.vbs -ipk xxxxx-xxxxx-xxxxx-xxxxx-xxxxx 
+```
+activate (KMS) Volume License Key
+```ps1
+slmgr.vbs -ato 
 ```
 # Netsh commands
 detect proxy
@@ -250,6 +248,13 @@ Get-ADComputer -Identity $typepc -Properties *
 get name of AD Domain
 ```ps1
 ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain().Name).split(".")
+```
+Gpupdate for all computers in OU
+```ps1
+$Computers  = Get-AdComputer -SearchBase "OU=testuser, DC=TechDirectArchive,DC=local" -Filter *
+Foreach ($Computer in $Computers) {
+    invoke-gpupdate -Computer $Computers.Name
+} 
 ```
 ## DHCP/DNS
 add new a record
@@ -291,17 +296,8 @@ Get if pc or laptop, PCSystemType = 1 (Desktop), PCSystemType = 2 (Laptop)
 ```ps1
 (Get-CimInstance -ClassName Win32_ComputerSystem).PCSystemType
 ```
-# New-Object
-Minimize all apps
+Get all user profiles and their SIDs
 ```ps1
-$shell = New-Object -ComObject "Shell.Application"
-$shell.MinimizeAll()
-sleep -Seconds 5
-$shell.undominimizeall()
+Get-WmiObject Win32_UserProfile | Where-Object { $_.Special -eq $false } | Select-Object LocalPath, SID
 ```
-Read a file
-```ps1
-$FileObj = New-Object System.IO.StreamReader -Arg "C:\Users\Installers.txt"
-$FileObj.ReadToEnd()
-$FileObj.Close()
-```
+
